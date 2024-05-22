@@ -1,372 +1,125 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Footer from './Footer';
 
 const Home = ({ setButtonText, setButtonPath }) => {
-
     const router = useNavigate();
+    const scrollAmount = 265;
 
-    const sliderRef = useRef(null);
-    const scrollAmount = 100;
+    setButtonText('Sign In');
+    setButtonPath('/signin');
 
-    setButtonText('Sign In')
-    setButtonPath('/signin')
+    const [loading, setLoading] = useState(true);
 
-    const [tranding, setTrandingSongs] = useState([]);
+    const [trending, setTrendingSongs] = useState([]);
     const [week20, setWeek20] = useState([]);
-    const [month50, SetMonth50] = useState([]);
+    const [month50, setMonth50] = useState([]);
     const [evergreen, setEvergreen] = useState([]);
-    const [happy, SetHappy] = useState([]);
+    const [happy, setHappy] = useState([]);
     const [romantic, setRomantic] = useState([]);
     const [excited, setExcited] = useState([]);
     const [sad, setSad] = useState([]);
 
+    const refs = {
+        trending: useRef(null),
+        week20: useRef(null),
+        month50: useRef(null),
+        evergreen: useRef(null),
+        happy: useRef(null),
+        romantic: useRef(null),
+        excited: useRef(null),
+        sad: useRef(null),
+    };
+
     useEffect(() => {
-        fetchVideos1();
-        fetchVideos2();
-        fetchVideos3();
-        fetchVideos4();
-        fetchVideos5();
-        fetchVideos6();
-        fetchVideos7();
-        fetchVideos8();
+        fetchVideos();
     }, []);
 
-    const fetchVideos1 = async () => {
+    const fetchVideos = async () => {
+        setLoading(true);
         try {
-            const response = await fetch('https://academics.newtonschool.co/api/v1/musicx/song?featured=Trending%20songs', {
-                headers: {
-                    'accept': 'application/json',
-                    'projectID': 'jscjwatei3cb'
-                }
-            });
-            const data = await response.json();
+            const responses = await Promise.all([
+                fetch('https://academics.newtonschool.co/api/v1/musicx/song?featured=Trending%20songs', { headers: { 'accept': 'application/json', 'projectID': 'hb37kd6oux6l' } }),
+                fetch('https://academics.newtonschool.co/api/v1/musicx/song?featured=Top 20 of this week', { headers: { 'accept': 'application/json', 'projectID': 'hb37kd6oux6l' } }),
+                fetch('https://academics.newtonschool.co/api/v1/musicx/song?featured=Top 50 of this month', { headers: { 'accept': 'application/json', 'projectID': 'hb37kd6oux6l' } }),
+                fetch('https://academics.newtonschool.co/api/v1/musicx/song?featured=Evergreen melodies', { headers: { 'accept': 'application/json', 'projectID': 'hb37kd6oux6l' } }),
+                fetch('https://academics.newtonschool.co/api/v1/musicx/song?mood=happy', { headers: { 'accept': 'application/json', 'projectID': 'hb37kd6oux6l' } }),
+                fetch('https://academics.newtonschool.co/api/v1/musicx/song?mood=romantic', { headers: { 'accept': 'application/json', 'projectID': 'hb37kd6oux6l' } }),
+                fetch('https://academics.newtonschool.co/api/v1/musicx/song?mood=excited', { headers: { 'accept': 'application/json', 'projectID': 'hb37kd6oux6l' } }),
+                fetch('https://academics.newtonschool.co/api/v1/musicx/song?mood=sad', { headers: { 'accept': 'application/json', 'projectID': 'hb37kd6oux6l' } })
+            ]);
 
-            setTrandingSongs(data.data);
+            const data = await Promise.all(responses.map(response => response.json()));
+
+            setTrendingSongs(data[0].data);
+            setWeek20(data[1].data);
+            setMonth50(data[2].data);
+            setEvergreen(data[3].data);
+            setHappy(data[4].data);
+            setRomantic(data[5].data);
+            setExcited(data[6].data);
+            setSad(data[7].data);
         } catch (error) {
             console.error('Error fetching data:', error);
-        }
-    };
-
-    const fetchVideos2 = async () => {
-        try {
-            const response = await fetch('https://academics.newtonschool.co/api/v1/musicx/song?featured=Top 20 of this week', {
-                headers: {
-                    'accept': 'application/json',
-                    'projectID': 'jscjwatei3cb'
-                }
-            });
-            const data = await response.json();
-            console.log('setWeek20', data)
-            setWeek20(data.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
-
-    const fetchVideos3 = async () => {
-        try {
-            const response = await fetch('https://academics.newtonschool.co/api/v1/musicx/song?featured= Top 50 of this month', {
-                headers: {
-                    'accept': 'application/json',
-                    'projectID': 'jscjwatei3cb'
-                }
-            });
-            const data = await response.json();
-            console.log('SetMonth50', data)
-            SetMonth50(data.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const fetchVideos4 = async () => {
-        try {
-            const response = await fetch('https://academics.newtonschool.co/api/v1/musicx/song?featured=Evergreen melodies', {
-                headers: {
-                    'accept': 'application/json',
-                    'projectID': 'jscjwatei3cb'
-                }
-            });
-            const data = await response.json();
-            console.log('setEvergreen', data)
-            setEvergreen(data.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
-
-    const fetchVideos5 = async () => {
-        try {
-            const response = await fetch('https://academics.newtonschool.co/api/v1/musicx/song?mood=happy', {
-                headers: {
-                    'accept': 'application/json',
-                    'projectID': 'jscjwatei3cb'
-                }
-            });
-            const data = await response.json();
-            console.log('SetHappy', data)
-            SetHappy(data.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
-    const fetchVideos6 = async () => {
-        try {
-            const response = await fetch('https://academics.newtonschool.co/api/v1/musicx/song?mood=romantic', {
-                headers: {
-                    'accept': 'application/json',
-                    'projectID': 'jscjwatei3cb'
-                }
-            });
-            const data = await response.json();
-            console.log('setRomantic', data)
-            setRomantic(data.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
-    const fetchVideos7 = async () => {
-        try {
-            const response = await fetch('https://academics.newtonschool.co/api/v1/musicx/song?mood=excited', {
-                headers: {
-                    'accept': 'application/json',
-                    'projectID': 'jscjwatei3cb'
-                }
-            });
-            const data = await response.json();
-            console.log('setExcited', data)
-            setExcited(data.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
-    const fetchVideos8 = async () => {
-        try {
-            const response = await fetch('https://academics.newtonschool.co/api/v1/musicx/song?mood=sad', {
-                headers: {
-                    'accept': 'application/json',
-                    'projectID': 'jscjwatei3cb'
-                }
-            });
-            const data = await response.json();
-            console.log('setSad', data)
-            setSad(data.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
+    const renderCategory = (title, songs, ref) => (
+        <div className='category'>
+            <h1 className='font-[900] text-4xl px-5 py-2'>{title}</h1>
+            <div className='flex flex-row justify-center'>
+                <button className="text-inherit cursor-pointer bg-transparent h-[250px] w-[30px] m-[5px] rounded-md border-[none]"
+                    onClick={() => {
+                        const container = ref.current;
+                        container.scrollLeft -= scrollAmount; // Scroll left by the specified amount
+                    }}>
+                    <h1 className='text-white text-2xl'>{'◀'}</h1>
+                </button>
+                <div className='flex flex-row overflow-scroll scroll-smooth transition-[scroll] duration-[0.3s] ease-[ease-in-out]' ref={ref}>
+                    {songs.map((item) => (
+                        <div key={item._id} className='m-2' onClick={() => router(`/song/${item._id}`)}>
+                            <img src={item.thumbnail} alt={(item.name) + 'thumbnail'} className='h-[250px] w-[250px] max-w-none' />
+                            <h2 className='font-[900]'>{item.title}</h2>
+                            {item.artist.map((artist) => (
+                                <span key={artist._id} className='text-slate-400'>{artist.name}, </span>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+                <button className="text-inherit cursor-pointer bg-transparent h-[250px] w-[30px] m-[5px] rounded-md border-[none]"
+                    onClick={() => {
+                        const container = ref.current;
+                        container.scrollLeft += scrollAmount; // Scroll right by the specified amount
+                    }}>
+                    <h1 className='text-white text-2xl'>{'▶'}</h1>
+                </button>
+            </div>
+        </div>
+    );
 
     return (
         <div className='bg-[#262628] text-white pt-[70px]'>
-            <div className='tranding '>
-                <h1 className='font-[900] text-4xl px-5 py-2'>Trending Songs</h1>
-                <div className='flex flex-roww justify-center '>
-                    <button
-                        className="text-inherit cursor-pointer bg-[#c3c3c3] h-[250px] w-[30px] m-[5px] rounded-md border-[none]"
-                        onClick={() => {
-                            const container = sliderRef.current;
-                            container.scrollLeft -= scrollAmount; // Scroll left by the specified amount
-                        }}
-                    > <h1 className='text-black'>Left</h1>
-                    </button> 
-                <div className='flex flex-row overflow-scroll scroll-smooth transition-[scroll] duration-[0.3s] ease-[ease-in-out]' ref={sliderRef}>
-                    {tranding.map((item) => {
-                        return (
-                            <div 
-                            className='m-2'
-                            onClick={()=> {
-                                router(`/song/${item._id}`)
-                            }}>
-                                <img src={item.thumbnail} alt={(item.name) + 'thumbnail'} className='h-[250px] w-[250px] max-w-none' />
-                                <h2 className=' font-[900]'>{item.title}</h2>
-                                {item.artist.map((items) => {
-                                    return (
-                                        <span className='text-slate-400'>{items.name}, </span>
-                                    )
-                                })}
-                            </div>
-                        )
-                    })}
+            {loading ? (
+                <div className="flex justify-center items-center h-screen">
+                    <p>Loading...</p>
                 </div>
-                    <button
-                        className="text-inherit cursor-pointer bg-[#c3c3c3] h-[250px] w-[30px] m-[5px]  rounded-md border-[none]"
-                        onClick={() => {
-                            const container = sliderRef.current;
-                            container.scrollLeft += scrollAmount; // Scroll right by the specified amount
-                        }}
-                    > <h1 className='text-black'>Right</h1>
-                    </button>
-                </div>
-            </div>
-            <div className='week20 '>
-                <h1 className='font-[900] text-4xl px-5 py-2'>Top 20 of this Week</h1>
-                <div className='flex flex-roww justify-center '>
-                    <button
-                        className="text-inherit cursor-pointer bg-[#c3c3c3] h-[250px] w-[30px] m-[5px] rounded-md border-[none]"
-                        onClick={() => {
-                            const container = sliderRef.current;
-                            container.scrollLeft -= scrollAmount; // Scroll left by the specified amount
-                        }}
-                    > <h1 className='text-black'>Left</h1>
-                    </button> 
-                <div className='flex flex-row overflow-scroll scroll-smooth transition-[scroll] duration-[0.3s] ease-[ease-in-out]' ref={sliderRef}>
-                    {week20.map((item) => {
-                        return (
-                            <div
-                            className='m-2'
-                            onClick={()=> {
-                                router(`/song/${item._id}`)
-                            }}>
-                                <img src={item.thumbnail} alt={(item.name) + 'thumbnail'} className='h-[250px] w-[250px] max-w-none' />
-                                <h2 className=' font-[900]'>{item.title}</h2>
-                                {item.artist.map((items) => {
-                                    return (
-                                        <span className='text-slate-400'>{items.name}, </span>
-                                    )
-                                })}
-                            </div>
-                        )
-                    })}
-                </div>
-                <button
-                        className="text-inherit cursor-pointer bg-[#c3c3c3] h-[250px] w-[30px] m-[5px]  rounded-md border-[none]"
-                        onClick={() => {
-                            const container = sliderRef.current;
-                            container.scrollLeft += scrollAmount; // Scroll right by the specified amount
-                        }}
-                    > <h1 className='text-black'>Right</h1>
-                    </button>
-                </div>
-            </div>
-            <div className='month50'>
-                <h1 className='font-[900] text-4xl px-5 py-2'>Top 50 of this Month</h1>
-                <div className='flex flex-row overflow-scroll scroll-smooth transition-[scroll] duration-[0.3s] ease-[ease-in-out]' ref={sliderRef}>
-                    {month50.map((item) => {
-                        return (
-                            <div 
-                            className='m-2'
-                            onClick={()=> {
-                                router(`/song/${item._id}`)
-                            }}>
-                                <img src={item.thumbnail} alt={(item.name) + 'thumbnail'} className='h-[250px] w-[250px] max-w-none' />
-                                <h2 className=' font-[900]'>{item.title}</h2>
-                                {item.artist.map((items) => {
-                                    return (
-                                        <span className='text-slate-400'>{items.name}, </span>
-                                    )
-                                })}
-                            </div>
-                        )
-                    })}
-                </div>
-            </div>
-            <div className='evergreen'>
-                <h1 className='font-[900] text-4xl px-5 py-2'>Evergreen Melodies</h1>
-                <div className='flex flex-row overflow-scroll scroll-smooth transition-[scroll] duration-[0.3s] ease-[ease-in-out]' ref={sliderRef}>
-                    {evergreen.map((item) => {
-                        return (
-                            <div className='m-2'
-                            onClick={()=> {
-                                router(`/song/${item._id}`)
-                            }}>
-                                <img src={item.thumbnail} alt={(item.name) + 'thumbnail'} className='h-[250px] w-[250px] max-w-none' />
-                                <h2 className=' font-[900]'>{item.title}</h2>
-                                {item.artist.map((items) => {
-                                    return (
-                                        <span className='text-slate-400'>{items.name}, </span>
-                                    )
-                                })}
-                            </div>
-                        )
-                    })}
-                </div>
-            </div>
-            <div className='happy'>
-                <h1 className='font-[900] text-4xl px-5 py-2'>Happy Songs</h1>
-                <div className='flex flex-row overflow-scroll scroll-smooth transition-[scroll] duration-[0.3s] ease-[ease-in-out]' ref={sliderRef}>
-                    {happy.map((item) => {
-                        return (
-                            <div className='m-2'
-                            onClick={()=> {
-                                router(`/song/${item._id}`)
-                            }}>
-                                <img src={item.thumbnail} alt={(item.name) + 'thumbnail'} className='h-[250px] w-[250px] max-w-none' />
-                                <h2 className=' font-[900]'>{item.title}</h2>
-                                {item.artist.map((items) => {
-                                    return (
-                                        <span className='text-slate-400'>{items.name}, </span>
-                                    )
-                                })}
-                            </div>
-                        )
-                    })}
-                </div>
-            </div>
-            <div className='romantic'>
-                <h1 className='font-[900] text-4xl px-5 py-2'>Romantic Songs</h1>
-                <div className='flex flex-row overflow-scroll scroll-smooth transition-[scroll] duration-[0.3s] ease-[ease-in-out]' ref={sliderRef}>
-                    {romantic.map((item) => {
-                        return (
-                            <div className='m-2'
-                            onClick={()=> {
-                                router(`/song/${item._id}`)
-                            }}>
-                                <img src={item.thumbnail} alt={(item.name) + 'thumbnail'} className='h-[250px] w-[250px] max-w-none' />
-                                <h2 className=' font-[900]'>{item.title}</h2>
-                                {item.artist.map((items) => {
-                                    return (
-                                        <span className='text-slate-400'>{items.name}, </span>
-                                    )
-                                })}
-                            </div>
-                        )
-                    })}
-                </div>
-            </div>
-            <div className='excited'>
-                <h1 className='font-[900] text-4xl px-5 py-2'>Excited Songs</h1>
-                <div className='flex flex-row overflow-scroll scroll-smooth transition-[scroll] duration-[0.3s] ease-[ease-in-out]' ref={sliderRef}>
-                    {excited.map((item) => {
-                        return (
-                            <div className='m-2'
-                            onClick={()=> {
-                                router(`/song/${item._id}`)
-                            }}>
-                                <img src={item.thumbnail} alt={(item.name) + 'thumbnail'} className='h-[250px] w-[250px] max-w-none' />
-                                <h2 className=' font-[900]'>{item.title}</h2>
-                                {item.artist.map((items) => {
-                                    return (
-                                        <span className='text-slate-400'>{items.name}, </span>
-                                    )
-                                })}
-                            </div>
-                        )
-                    })}
-                </div>
-            </div>
-            <div className='sad'>
-                <h1 className='font-[900] text-4xl px-5 py-2'>Sad Songs</h1>
-                <div className='flex flex-row overflow-scroll scroll-smooth transition-[scroll] duration-[0.3s] ease-[ease-in-out]' ref={sliderRef}>
-                    {sad.map((item) => {
-                        return (
-                            <div className='m-2'
-                            onClick={()=> {
-                                router(`/song/${item._id}`)
-                            }}>
-                                <img src={item.thumbnail} alt={(item.name) + 'thumbnail'} className='h-[250px] w-[250px] max-w-none' />
-                                <h2 className=' font-[900]'>{item.title}</h2>
-                                {item.artist.map((items) => {
-                                    return (
-                                        <span className='text-slate-400'>{items.name}, </span>
-                                    )
-                                })}
-                            </div>
-                        )
-                    })}
-                </div>
-            </div>
+            ) : (
+                <>
+                    {renderCategory('Trending Songs', trending, refs.trending)}
+                    {renderCategory('Top 20 of this week', week20, refs.week20)}
+                    {renderCategory('Top 50 of this month', month50, refs.month50)}
+                    {renderCategory('Evergreen melodies', evergreen, refs.evergreen)}
+                    {renderCategory('Happy Mood', happy, refs.happy)}
+                    {renderCategory('Romantic Mood', romantic, refs.romantic)}
+                    {renderCategory('Excited Mood', excited, refs.excited)}
+                    {renderCategory('Sad Mood', sad, refs.sad)}
+                </>
+            )}
+            <Footer/>
         </div>
-    )
-}
+    );
+};
 
-export default Home
+export default Home;

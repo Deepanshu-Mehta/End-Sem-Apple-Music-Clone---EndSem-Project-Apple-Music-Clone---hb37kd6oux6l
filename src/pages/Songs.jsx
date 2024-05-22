@@ -1,56 +1,59 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 
-const Songs = ({token}) => {
-
-    const [songs, setSongs] = useState([])
+const Songs = ({ token }) => {
+    const { id } = useParams();
+    const [loading, setLoading] = useState(true);
+    const [song, setSong] = useState(null);
 
     useEffect(() => {
-        fetchVideo();
+        fetchSong();
         // eslint-disable-next-line
     }, []);
 
-    const { id } = useParams();
-
-    const fetchVideo = async () => {
+    const fetchSong = async () => {
+        setLoading(true);
         try {
             const response = await fetch(`https://academics.newtonschool.co/api/v1/musicx/song/${id}`, {
                 headers: {
                     'accept': 'application/json',
-                    'projectID': 'jscjwatei3cb',
+                    'projectID': 'hb37kd6oux6l',
                     'Authorization': `Bearer ${token}`
                 }
             });
             const data = await response.json();
-            console.log(data);
-            setSongs(data);
+            setSong(data.data);
         } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error('Error fetching song:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
-    
-
     return (
-        <div className="bg-[#262628] text-white pt-[70px] h-[100dvh] flex flex-col justify-center items-center ">
-            {// eslint-disable-next-line
-            songs.length == 0 ? 
-            <h1>loding</h1>
-            :
-            <><div>
-                <img src={songs.data.thumbnail} alt={songs.data.thumbnail} className="m-2 mb-5"/>
-            </div>
-            <h1 className='font-[900] text-4xl mb-3'>{songs.data.title}</h1>
-            <div className='flex flex-row text-slate-400'><i className="fa-solid fa-star"/> {' '}{songs.data.featured}</div>
-            {songs.data.artist.map((data)=>{
-                return(
-                <span className='text-slate-400'>{data.name}, </span>
-            )})}
-            <audio src={songs.data.audio_url} controls className='mb-3 '></audio>
-            </>
-            }
+        <div className='bg-[#262628] text-white pt-[70px] h-[100dvh] flex justify-center items-center h-screen'>
+            {loading ? (
+                <div className="flex justify-center items-center h-screen">
+                    <p>Loading...</p>
+                </div>
+            ) : (
+                song && (
+                    <div>
+                        <h1 className='font-[900] text-4xl'>{song.title}</h1>
+                        <img src={song.thumbnail} alt={song.title + ' thumbnail'} />
+                        <p>{song.description}</p>
+                        <div>
+                            {song.artist.map((artist) => (
+                                <span key={artist._id}>{artist.name}, </span>
+                            ))}
+                        </div>
+                        <audio src={song.audio_url} controls className='mb-3 '></audio>
+                    </div>
+                )
+            )}
         </div>
-    )
-}
+    );
+};
 
-export default Songs
+export default Songs;
