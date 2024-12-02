@@ -40,7 +40,15 @@ function App() {
   function Str({buttonText, buttonPath}) {
     return (
       <>
-        <header className="fixed w-full"><Nav buttonText={buttonText} buttonPath={buttonPath}/></header>
+        <header className="fixed w-full">
+          <Nav 
+            buttonText={login ? 'Sign Out' : buttonText} 
+            buttonPath={login ? '/' : buttonPath}
+            login={login}
+            setLogin={setLogin}
+            setToken={setToken}
+          />
+        </header>
         <main><Outlet/></main>
       </>
     )

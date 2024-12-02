@@ -32,7 +32,7 @@ const Songs = ({ token }) => {
     };
 
     return (
-        <div className='bg-[#262628] text-white pt-[70px] h-[100dvh] flex justify-center items-center h-screen'>
+        <div className='bg-[#262628] text-white pt-[70px] flex justify-center items-center h-screen'>
             {loading ? (
                 <div className="flex justify-center items-center h-screen">
                     <p>Loading...</p>
